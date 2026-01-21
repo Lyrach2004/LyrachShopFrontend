@@ -6,10 +6,13 @@ import { ListProductComponent } from './components/list-product/list-product.com
 import {HttpClientModule} from "@angular/common/http";
 import {ProductService} from "./services/product.service";
 import {RouterModule, Routes} from "@angular/router";
+import { ProductCategoryMenuComponent } from './components/product-category-menu/product-category-menu.component';
+import { SearchComponent } from './components/search/search.component';
 
 const routes:Routes=[
+  {path:'search/:keyword',component:ListProductComponent},
   {path:'category',component:ListProductComponent},
-  {path:'category/:id',component:ListProductComponent},
+  {path:'category/:id/:categoryName',component:ListProductComponent},
   {path:'products',component:ListProductComponent},
   {path:'',redirectTo:'/products',pathMatch:'full'},
   {path:'**',redirectTo:'/products',pathMatch:'full'}
@@ -18,7 +21,9 @@ const routes:Routes=[
 @NgModule({
   declarations: [
     AppComponent,
-    ListProductComponent
+    ListProductComponent,
+    ProductCategoryMenuComponent,
+    SearchComponent
   ],
   imports: [
     RouterModule.forRoot(routes),
