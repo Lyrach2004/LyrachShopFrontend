@@ -37,6 +37,14 @@ export class ProductService {
     const categoryUrl=`${this.categoryUrl}/${categoryId}`;
     return this.httpClient.get<ProductCategory>(categoryUrl);
   }
+
+  searchProducts(keyword: string):Observable<Product[]> {
+
+    const searchUrl=`${this.baseUrl}/search/findByNameContaining?keyword=${keyword}`;
+    return this.httpClient.get<GetResponseProducts>(searchUrl).pipe(
+      map(response=>response._embedded.products)
+    )
+  }
 }
 
 interface GetResponseProducts{
