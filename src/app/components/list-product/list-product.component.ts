@@ -10,10 +10,16 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class ListProductComponent implements OnInit {
 
-  products!:Product[];
-  currentCategoryId!:number;
-  currentCategoryName!:string;
+  products:Product[]=[];
+  currentCategoryId:number=1;
+  previousCategoryId:number=1;
   searchMode:boolean=false;
+
+  pageNumber:number=1;
+  pageSize:number=5;
+  totalElements:number=0;
+
+  previousKeyWord:string='';
 
   constructor(private productService:ProductService,
               private activatedRoute:ActivatedRoute
@@ -39,26 +45,53 @@ export class ListProductComponent implements OnInit {
 
   handleProducts(){
     const hasCategoryId:boolean=this.activatedRoute.snapshot.paramMap.has('id');
-    const hasCategoryName:boolean=this.activatedRoute.snapshot.paramMap.has('categoryName');
 
     if(hasCategoryId){
       this.currentCategoryId= +this.activatedRoute.snapshot.paramMap.get('id')!;
-      this.currentCategoryName=this.activatedRoute.snapshot.paramMap.get('categoryName')!;
 
     }else{
       this.currentCategoryId=1;
-      this.currentCategoryName="Books";
     }
 
-    this.productService.getProducts(this.currentCategoryId).subscribe(
-      data=>this.products=data
-    )
+    if(this.previousCategoryId!==this.currentCategoryId){
+      this.pageNumber=1;
+    }
+
+    this.previousCategoryId=this.currentCategoryId;
+
+    this.productService.getProductsListPaginate(this.pageNumber-1,
+                                                this.pageSize,
+                                                this.currentCategoryId
+      ).subscribe(this.processResult())
   }
 
   handleSearch(){
 
     const keyword:string=this.activatedRoute.snapshot.paramMap.get('keyword')!;
-    console.log("Keyword: "+keyword+" ");
-    this.productService.searchProducts(keyword).subscribe(data=>this.products=data)
+
+    if(this.previousKeyWord!==keyword){
+      this.pageNumber=1;
+    }
+
+    this.previousKeyWord=keyword;
+
+    this.productService.searchProductsPaginate(this.pageNumber-1,
+                                               this.pageSize,
+                                               keyword
+    ).subscribe(this.processResult())
+  }
+
+  updatePageSize() {
+    this.pageNumber=1;
+    this.listProducts();
+  }
+
+  processResult(){
+    return (data:any)=>{
+      this.products=data._embedded.products;
+      this.pageNumber=data.page.number+1;
+      this.pageSize=data.page.size;
+      this.totalElements=data.page.totalElements;
+  }
   }
 }

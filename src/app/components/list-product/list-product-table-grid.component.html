@@ -4,8 +4,10 @@
       <div class="row">
         <div  *ngFor="let product of products" class="col-md-3">
           <div class="product-box">
-            <img [src]="product.imageUrl" class="img-responsive" alt="product img">
-            <h1>{{product.name}}</h1>
+            <a [routerLink]="['/products',product.id]">
+              <img [src]="product.imageUrl" class="img-responsive" alt="product img">
+              <h1>{{product.name}}</h1>
+            </a>
             <div class="price">{{product.unitPrice|currency:'USD'}}</div>
             <a href="#" class="primary-btn">Add to cart</a>
           </div>
@@ -16,8 +18,38 @@
             No product found!
           </div>
         </div>
-
       </div>
+
+      <div class="footer-pagination">
+        <div class="row">
+          <div class="col-md-6"></div>
+          <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-9" style="padding-left: 30%;">
+                    <ngb-pagination [(page)]="pageNumber"
+                                    [collectionSize]="totalElements"
+                                    [pageSize]="pageSize"
+                                    [boundaryLinks]="true"
+                                    [maxSize]="5"
+                                    (pageChange)="listProducts()"
+                    >
+                    </ngb-pagination>
+                </div>
+                <div class="col-md-3 mt-2" style="text-align:right;">
+                  <span class="me-2">Page size</span>
+                  <select  [(ngModel)]="pageSize" (ngModelChange)="updatePageSize()">
+                    <option [ngValue]="2">2</option>
+                    <option [ngValue]="5">5</option>
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="20">20</option>
+                    <option [ngValue]="50">50</option>
+                  </select>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

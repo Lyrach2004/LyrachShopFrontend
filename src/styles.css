@@ -548,6 +548,7 @@ input.au-input.au-input-xl{
   color:#0da8e4
 }
 .product-box h1{
+  clear: both;
   font-size:18px;
   border-bottom:1px solid #ccc;
   padding-bottom:5px;
@@ -729,6 +730,14 @@ table.table.table-bordered th{
 }
 .detail-section{
   margin-top:60px
+}
+
+.detail-section a{
+  text-decoration:none;
+}
+
+.detail-img{
+  width:30%
 }
 /**/
 
@@ -985,6 +994,8 @@ footer ul li{
   .product-box{
     text-align:center
   }
+
+
   .page-container{
     position:relative;
     top:66px;

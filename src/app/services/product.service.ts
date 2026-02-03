@@ -16,13 +16,20 @@ export class ProductService {
 
   constructor(private httpClient:HttpClient) { }
 
-  getProducts(categoryId:number):Observable<Product[]>{
+
+  getProductsListPaginate(page:number,
+                          size:number,
+                          categoryId:number):Observable<GetResponseProducts>{
+
+    const searchUrl=`${this.baseUrl}/search/findByCategoryId?id=${categoryId}`
+                            +`&page=${page}&size=${size}`;
+    return this.httpClient.get<GetResponseProducts>(searchUrl);
+  }
+
+  getProductsList(categoryId:number):Observable<Product[]>{
 
     const searchUrl=`${this.baseUrl}/search/findByCategoryId?id=${categoryId}`;
-
-    return this.httpClient.get<GetResponseProducts>(searchUrl).pipe(
-      map(response=>response._embedded.products)
-    )
+    return this.getProducts(searchUrl);
   }
 
   getProductCategories():Observable<ProductCategory[]>{
@@ -33,23 +40,43 @@ export class ProductService {
     )
   }
 
-  getCategory(categoryId:number):Observable<ProductCategory>{
-    const categoryUrl=`${this.categoryUrl}/${categoryId}`;
-    return this.httpClient.get<ProductCategory>(categoryUrl);
-  }
 
   searchProducts(keyword: string):Observable<Product[]> {
 
     const searchUrl=`${this.baseUrl}/search/findByNameContaining?keyword=${keyword}`;
+    return this.getProducts(searchUrl);
+  }
+
+  searchProductsPaginate( page:number,
+                          size:number,
+                          keyword:string):Observable<GetResponseProducts>{
+
+    const searchUrl=`${this.baseUrl}/search/findByNameContaining?keyword=${keyword}`
+                            +`&page=${page}&size=${size}`;
+    return this.httpClient.get<GetResponseProducts>(searchUrl);
+  }
+
+
+  getProduct(productId:number):Observable<Product>{
+    const searchUrl:string=`${this.baseUrl}/${productId}`;
+    return this.httpClient.get<Product>(searchUrl);
+  }
+
+  private getProducts(searchUrl: string) {
     return this.httpClient.get<GetResponseProducts>(searchUrl).pipe(
-      map(response=>response._embedded.products)
-    )
+      map(response => response._embedded.products))
   }
 }
 
 interface GetResponseProducts{
   _embedded:{
     products:Product[]
+  },
+  page:{
+    size:number,
+    totalElements:number,
+    totalPages:number,
+    number:number
   }
 }
 
