@@ -101,7 +101,5 @@ export class ListProductComponent implements OnInit {
   addToCart(product: Product) {
     const cartItem:CartItem=new CartItem(product);
     this.cartService.addToCart(cartItem);
-
-
   }
 }
