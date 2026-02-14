@@ -7,6 +7,9 @@ import {LyrachShopValidators} from "../../validators/lyrach-shop-validators";
 import {CartService} from "../../services/cart.service";
 import {CheckoutService} from "../../services/checkout.service";
 import {Router} from "@angular/router";
+import {Order} from "../../common/order";
+import {OrderItem} from "../../common/order-item";
+import {Purchase} from "../../common/purchase";
 
 @Component({
   selector: 'app-checkout',
@@ -163,6 +166,54 @@ export class CheckoutComponent implements OnInit {
       this.checkoutFormGroup.markAllAsTouched();
       return;
     }
+    //set up order
+    let order=new Order();
+    order.totalPrice=this.totalPrice;
+    order.totalQuantity=this.totalQuantity;
+    //get cart items
+    const cartItems=this.cartService.cartItems;
+    //create orderItems from cartItems
+    let orderItems:OrderItem[]=cartItems.map(tempCartItem=>new OrderItem(tempCartItem));
+
+    let purchase=new Purchase();
+    //populate purchase - Customer
+    purchase.customer=this.checkoutFormGroup.controls['customer'].value;
+
+    //populate purchase - shippingAddress
+    purchase.shippingAddress=this.checkoutFormGroup.controls['shippingAddress'].value;
+    const shippingState:State=JSON.parse(JSON.stringify(purchase.shippingAddress.state));
+    const shippingCountry:Country=JSON.parse(JSON.stringify(purchase.shippingAddress.country));
+    purchase.shippingAddress.state=shippingState.name;
+    purchase.shippingAddress.country=shippingCountry.name;
+
+    //populate purchase - billing address
+    purchase.billingAddress=this.checkoutFormGroup.controls['billingAddress'].value;
+    const billingState:State=JSON.parse(JSON.stringify(purchase.billingAddress.state));
+    const billingCountry:Country=JSON.parse(JSON.stringify(purchase.billingAddress.country));
+    purchase.billingAddress.state=billingState.name;
+    purchase.billingAddress.country=billingCountry.name;
+
+    //populate purchase - order and orderItems
+    purchase.order=order;
+    purchase.orderItems=orderItems;
+
+    //call REST API via the checkoutService
+   this.checkoutService.placeOrder(purchase).subscribe(
+     {
+       next:response=>{
+         alert(`Your order has been received.\nOrder tracking number:${response.orderTrackingNumber}`);
+
+         //reset cart
+         this.resetCart();
+
+       },
+       error:error=>{
+         alert(`There was an error: ${error.message}`);
+       }
+     }
+   )
+
+
   }
 
   copyShippingAddressToBillingAddress(event:any){
@@ -201,8 +252,6 @@ export class CheckoutComponent implements OnInit {
     const countryCode:string=formGroup.value.country.code;
     const countryName:string=formGroup.value.country.name;
 
-    console.log(`Country code:${countryCode} and country name:${countryName}`);
-
     this.lyrachShopFormService.getStates(countryCode).subscribe(
       data=>{
         if(formGroupName==='shippingAddress'){
@@ -220,5 +269,16 @@ export class CheckoutComponent implements OnInit {
   private reviewCardDetails() {
     this.cartService.totalPrice.subscribe(price=>this.totalPrice=price);
     this.cartService.totalQuantity.subscribe(quantity=>this.totalQuantity=quantity);
+  }
+
+  resetCart() {
+    //reset cart data
+    this.cartService.cartItems=[];
+    this.cartService.totalPrice.next(0);
+    this.cartService.totalQuantity.next(0);
+    //reset the form
+    this.checkoutFormGroup.reset();
+    //navigate back to the products page
+    this.router.navigateByUrl("/products");
   }
 }

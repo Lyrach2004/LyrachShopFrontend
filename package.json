@@ -18,6 +18,8 @@
     "@angular/platform-browser": "^14.0.0",
     "@angular/platform-browser-dynamic": "^14.0.0",
     "@angular/router": "^14.0.0",
+    "@auth0/auth0-angular": "^1.10.0",
+    "@auth0/auth0-spa-js": "^1.22.0",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@ng-bootstrap/ng-bootstrap": "^13.0.0",
     "bootstrap": "^5.2.0",
