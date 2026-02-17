@@ -27,6 +27,8 @@ export class CheckoutComponent implements OnInit {
   shippingAddressStates!:State[];
   billingAddressStates!:State[];
 
+  storage:Storage=localStorage;
+
   constructor(
     private formBuilder:FormBuilder,
     private lyrachShopFormService:LyrachShopFormService,

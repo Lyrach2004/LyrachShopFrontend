@@ -1,0 +1,30 @@
+<div class="main-content">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid">
+      <h3>Your Orders</h3>
+      <div *ngIf="orderHistoryList.length>0 ;else emptyOrderTmp">
+          <table class="table table-bordered">
+            <tr>
+              <th style="width:20%" >Order Tracking Number</th>
+              <th style="width:10%">Total Price</th>
+              <th style="width:10%">Total Quantity</th>
+              <th style="width:10%">Date</th>
+            </tr>
+
+            <tr *ngFor="let order of orderHistoryList">
+              <td>{{order.orderTrackingNumber}}</td>
+              <td>{{order.totalPrice|currency:'USD'}}</td>
+              <td>{{order.totalQuantity}}</td>
+              <td>{{order.dateCreated|date:'medium'}}</td>
+            </tr>
+          </table>
+      </div>
+      <ng-template #emptyOrderTmp>
+        <div class="alert alert-warning col-md-12" role="alert">
+            No orders found.
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+</div>

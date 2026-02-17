@@ -19,11 +19,15 @@ export class LoginStatusComponent implements OnInit{
   ngOnInit(): void {
     this.auth.isAuthenticated$.subscribe((authenticated: boolean) => {
       this.isAuthenticated = authenticated;
+      this.getUserDetails();
     });
 
+  }
+
+  private getUserDetails() {
     this.auth.user$.subscribe((user) => {
       this.userEmail = user?.email;
-      this.profileJson =user?.nickname
+      this.profileJson = user?.nickname
       this.storage.setItem('userEmail', JSON.stringify(this.userEmail));
     });
   }
