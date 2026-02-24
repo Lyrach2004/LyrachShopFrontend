@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "npx ng serve --ssl true --ssl-key ./ssl-localhost/localhost.key --ssl-cert ./ssl-localhost/localhost.crt",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -24,6 +24,7 @@
     "@ng-bootstrap/ng-bootstrap": "^13.0.0",
     "bootstrap": "^5.2.0",
     "rxjs": "~7.5.0",
+    "stripe": "^8.179.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

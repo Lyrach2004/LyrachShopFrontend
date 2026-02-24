@@ -3,14 +3,15 @@ import {map, Observable, of} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {Country} from "../common/country";
 import {State} from "../common/state";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class LyrachShopFormService {
 
-  private countriesUrl:string='http://localhost:8080/api/countries';
-  private statesUrl:string='http://localhost:8080/api/states';
+  private countriesUrl:string=environment.lyrachShopApiUrl+'/countries';
+  private statesUrl:string=environment.lyrachShopApiUrl+'/states';
   constructor(
     private httpClient:HttpClient
   ) { }

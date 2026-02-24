@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Product} from "../common/product";
 import {map, Observable} from "rxjs";
 import {ProductCategory} from "../common/product-category";
+import {environment} from "../../environments/environment";
 
 
 @Injectable({
@@ -10,9 +11,9 @@ import {ProductCategory} from "../common/product-category";
 })
 export class ProductService {
 
-  private baseUrl:string='http://localhost:8080/api/products';
+  private baseUrl:string=environment.lyrachShopApiUrl+'/products';
 
-  private categoryUrl:string='http://localhost:8080/api/product-category';
+  private categoryUrl:string=environment.lyrachShopApiUrl+'/product-category';
 
   constructor(private httpClient:HttpClient) { }
 

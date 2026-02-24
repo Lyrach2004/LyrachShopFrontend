@@ -10,6 +10,8 @@ import {Router} from "@angular/router";
 import {Order} from "../../common/order";
 import {OrderItem} from "../../common/order-item";
 import {Purchase} from "../../common/purchase";
+import {environment} from "../../../environments/environment";
+import {PaymentInfo} from "../../common/payment-info";
 
 @Component({
   selector: 'app-checkout',
@@ -27,7 +29,14 @@ export class CheckoutComponent implements OnInit {
   shippingAddressStates!:State[];
   billingAddressStates!:State[];
 
-  storage:Storage=localStorage;
+  localStorage:Storage=localStorage;
+  sessionStorage:Storage=sessionStorage;
+
+  //initialize Stripe API
+  stripe=Stripe(environment.stripePublisableKey);
+  paymentInfo:PaymentInfo=new PaymentInfo();
+  cardElement:any;
+  displayError:any="";
 
   constructor(
     private formBuilder:FormBuilder,
@@ -38,11 +47,16 @@ export class CheckoutComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    //setup Stripe payment form
+    this.setupStripePaymentForm();
+
+    const theEmail=JSON.parse(this.sessionStorage.getItem('userEmail')!);
+    console.log(theEmail);
     this.checkoutFormGroup=this.formBuilder.group({
       customer:this.formBuilder.group({
         firstName:new FormControl('',[Validators.required,Validators.minLength(2),LyrachShopValidators.notOnlyWhitespace]),
         lastName:new FormControl('',[Validators.required,Validators.minLength(2),LyrachShopValidators.notOnlyWhitespace]),
-        email:new FormControl('',[Validators.required,
+        email:new FormControl(theEmail,[Validators.required,
           Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")])
       }),
       shippingAddress:this.formBuilder.group({
@@ -62,28 +76,20 @@ export class CheckoutComponent implements OnInit {
         }
       ),
       creditCard:this.formBuilder.group({
+        /*
           cardType:new FormControl('',[Validators.required]),
           nameOnCard:new FormControl('',[Validators.required,Validators.minLength(2),LyrachShopValidators.notOnlyWhitespace]),
           cardNumber:new FormControl('',[Validators.required,Validators.pattern("[0-9]{16}")]),
           securityCode:new FormControl('',[Validators.required,Validators.pattern("[0-9]{3}")]),
           expirationMonth:[''],
           expirationYear:['']
+
+         */
         }
       )
     })
 
     this.reviewCardDetails();
-
-    //populate credit card months
-    const startMonth:number=new Date().getMonth()+1;
-    this.lyrachShopFormService.getCreditCardMonths(startMonth).subscribe(
-      data=>this.creditCardMonths=data
-    );
-
-    //populate credit card years
-    this.lyrachShopFormService.getCreditCardYears().subscribe(
-      data=>this.creditCardYears=data
-    )
 
     //populate countries
     this.lyrachShopFormService.getCountries().subscribe(
@@ -275,12 +281,16 @@ export class CheckoutComponent implements OnInit {
 
   resetCart() {
     //reset cart data
-    this.cartService.cartItems=[];
+    this.localStorage.removeItem("cartItems");
     this.cartService.totalPrice.next(0);
     this.cartService.totalQuantity.next(0);
     //reset the form
     this.checkoutFormGroup.reset();
     //navigate back to the products page
     this.router.navigateByUrl("/products");
+  }
+
+  setupStripePaymentForm() {
+
   }
 }

@@ -51,6 +51,14 @@
               ],
               "outputHashing": "all"
             },
+            "qa": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.qa.ts"
+                }
+              ]
+            },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
@@ -61,12 +69,17 @@
             }
           },
           "defaultConfiguration": "production"
+
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
               "browserTarget": "lyrach-trade:build:production"
+            },
+            "qa": {
+              "browserTarget":"lyrach-trade:build:qa"
+
             },
             "development": {
               "browserTarget": "lyrach-trade:build:development"

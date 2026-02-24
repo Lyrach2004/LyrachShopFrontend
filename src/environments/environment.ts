@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  lyrachShopApiUrl:"https://localhost:8443/api",
+  stripePublisableKey:"pk_test_51T453cRlke9AZ1m14Qj3G6ASQVb4Fc1ScMjSoFiPZMkTuh86dV9wVAJn12q5CyTqoGhJAad3uaN3LODeGpTOrQZV00QyoQ25Us"
 };
 
 /*

@@ -8,13 +8,13 @@ import { OnInit } from '@angular/core';
   templateUrl: './login-status.component.html',
   styleUrls: ['./login-status.component.css']
 })
-export class LoginStatusComponent implements OnInit{
+export class LoginStatusComponent implements OnInit {
   isAuthenticated: boolean = false;
   profileJson: string | undefined;
   userEmail: string | undefined;
   storage: Storage = sessionStorage;
 
-  constructor(private auth: AuthService, @Inject(DOCUMENT) private doc: Document) {}
+  constructor(private auth: AuthService, @Inject(DOCUMENT) private doc: Document) { }
 
   ngOnInit(): void {
     this.auth.isAuthenticated$.subscribe((authenticated: boolean) => {
@@ -33,7 +33,13 @@ export class LoginStatusComponent implements OnInit{
   }
 
   login() {
-    this.auth.loginWithRedirect();
+    this.auth.loginWithRedirect({
+      authorizationParams: {
+        audience: "http://localhost:8080",
+        scope: "openid profile email"
+      }
+    });
+
   }
 
   logout(): void {

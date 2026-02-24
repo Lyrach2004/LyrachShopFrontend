@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {OrderHistory} from "../common/order-history";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderHistoryService {
 
-  private orderUrl='http://localhost:8080/api/orders';
+  private orderUrl=environment.lyrachShopApiUrl+'/orders';
   constructor(
     private httpClient:HttpClient
   ) { }
@@ -16,7 +17,7 @@ export class OrderHistoryService {
   getOrderHistory(email:string):Observable<GetResponseOrderHistory>{
 
     //build url based on the customer email
-    const orderHistoryUrl=`${this.orderUrl}/search/findByCustomerEmail?email=${email}`;
+    const orderHistoryUrl=`${this.orderUrl}/search/findByCustomerEmailOrderByDateCreatedDesc?email=${email}`;
 
     return this.httpClient.get<GetResponseOrderHistory>(orderHistoryUrl);
   }
