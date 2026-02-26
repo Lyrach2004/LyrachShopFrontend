@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
-import {CartItem} from "../common/cart-item";
-import {BehaviorSubject, Subject} from "rxjs";
+import { CartItem } from "../common/cart-item";
+import { BehaviorSubject, Subject } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
 
-  cartItems:CartItem[]=[];
-  totalPrice:Subject<number>=new BehaviorSubject<number>(0);
-  totalQuantity:Subject<number>=new BehaviorSubject<number>(0);
+  cartItems: CartItem[] = [];
+  totalPrice: Subject<number> = new BehaviorSubject<number>(0);
+  totalQuantity: Subject<number> = new BehaviorSubject<number>(0);
 
-  storage:Storage=localStorage;
+  storage: Storage = localStorage;
 
 
   constructor() {
     //read data from storage
-    let data=JSON.parse(this.storage.getItem('cartItems')!);
-    if(data!=null){
-      this.cartItems=data;
+    let data = JSON.parse(this.storage.getItem('cartItems')!);
+    if (data != null) {
+      this.cartItems = data;
       //compute totals based on the data that is read from storage
       this.computeCartTotals();
     }
@@ -26,19 +26,19 @@ export class CartService {
 
   }
 
-  addToCart(cartItem:CartItem){
+  addToCart(cartItem: CartItem) {
 
-    let alreadyExistsInCart:boolean=false;
-    let existingCartItem:CartItem|undefined=undefined;
+    let alreadyExistsInCart: boolean = false;
+    let existingCartItem: CartItem | undefined = undefined;
 
-    if(this.cartItems.length>0){
-      existingCartItem=this.cartItems.find(item=>item.id===cartItem.id);
-      alreadyExistsInCart=(existingCartItem!==undefined);
+    if (this.cartItems.length > 0) {
+      existingCartItem = this.cartItems.find(item => item.id === cartItem.id);
+      alreadyExistsInCart = (existingCartItem !== undefined);
     }
 
-    if(alreadyExistsInCart){
+    if (alreadyExistsInCart) {
       existingCartItem!.quantity++;
-    }else{
+    } else {
       this.cartItems.push(cartItem);
     }
 
@@ -47,13 +47,13 @@ export class CartService {
 
   computeCartTotals() {
 
-    let totalPriceValue:number=0;
-    let totalQuantityValue:number=0;
+    let totalPriceValue: number = 0;
+    let totalQuantityValue: number = 0;
 
     this.cartItems.forEach(
-      item=> {
-      totalPriceValue+=item.unitPrice*item.quantity;
-      totalQuantityValue+=item.quantity;
+      item => {
+        totalPriceValue += item.unitPrice * item.quantity;
+        totalQuantityValue += item.quantity;
       }
     )
 
@@ -65,23 +65,23 @@ export class CartService {
 
   }
 
-  persistCartItems(){
-    this.storage.setItem('cartItems',JSON.stringify(this.cartItems));
+  persistCartItems() {
+    this.storage.setItem('cartItems', JSON.stringify(this.cartItems));
   }
 
   decrementQuantity(cartItem: CartItem) {
     cartItem.quantity--;
-    if(cartItem.quantity===0){
+    if (cartItem.quantity === 0) {
       this.remove(cartItem);
-    }else{
+    } else {
       this.computeCartTotals();
     }
   }
 
   remove(cartItem: CartItem) {
-    const cartItemIndex:number=this.cartItems.findIndex(item=>item.id===cartItem.id);
-    if(cartItemIndex>-1){
-      this.cartItems.splice(cartItemIndex,1);
+    const cartItemIndex: number = this.cartItems.findIndex(item => item.id === cartItem.id);
+    if (cartItemIndex > -1) {
+      this.cartItems.splice(cartItemIndex, 1);
       this.computeCartTotals();
     }
   }
